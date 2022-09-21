@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "scraping"
+version = "0.1.0"
+description = ""
+authors = ["WayupKG <adikgk232323@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+beautifulsoup4 = "^4.11.1"
+lxml = "^4.9.1"
+requests = "^2.28.1"
+environs = "^9.5.0"
+SQLAlchemy = "^1.4.41"
+psycopg2 = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
