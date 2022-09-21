@@ -12,3 +12,9 @@ headers = {
     "Accept": "*/*",
     "User-Agent":  env.str("USER_AGENT")
 }
+
+
+# Файл, полученный в Google Developer Console
+CREDENTIALS_FILE = "credentials.json"
+# ID Google Sheets документа (можно взять из его URL)
+spreadsheet_id = "1kNKv6cvQeUidCEEQCrSWdwHOT0FxaCeJ0eQbrEzg_RE"
