@@ -29,4 +29,4 @@ $ python3 app.py
 ```
 <br><hr>
 
-## Ссылка на [Google Sheet](https://www.kijiji.ca/b-apartments-condos/city-of-toronto/c37l1700273).
+## Ссылка на [Google Sheet](https://docs.google.com/spreadsheets/d/1kNKv6cvQeUidCEEQCrSWdwHOT0FxaCeJ0eQbrEzg_RE/edit#gid=0).
