@@ -16,3 +16,4 @@ def save(data: list):
             ]
         }
     ).execute()
+    print("\n---- Все данные сохранены на Google Sheet ----\n")

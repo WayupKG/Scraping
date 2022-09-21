@@ -1,16 +1,17 @@
-import csv
 import requests
 import re
 
-from datetime import date
 from bs4 import BeautifulSoup
 
 from data.config import url, url_end, not_image, headers
 
-from service import save_google_sheets
-        
+from service import save_house_db
+from service import save_house_google_sheets
+
+
+
 def get_house(response):
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response, 'lxml')
     houses = soup.find("main").find_all("div", class_="search-item")
     page_data = []
     for item in houses:
@@ -23,22 +24,43 @@ def get_house(response):
     return page_data
 
 
-def get_page_houses(page: int):
+def get_response_page(page: int):
+    full_url = f"{url}page-{page}/{url_end}"
+    response = requests.get(full_url, headers=headers)
+    response_page = re.findall(r'\d{1}/|\d{2}/', response.url)
+    current_page = int(response_page[0].replace('/', '')) if response_page else 1
+    context = {'response': response.text, 'page': current_page}
+    return context
+
+
+def get_page_houses(start_page: int, end_page: int):
     data = []
-    for i in range(1, page):
-        full_url = f"{url}page-{i}/{url_end}"
-        req = requests.get(full_url, headers=headers)
-        req_page = re.findall(r'\d{1}/|\d{2}/', req.url)
-        current_page = int(req_page[0].replace('/', '')) if req_page else 1
+    for i in range(start_page, end_page + 1):
+        response_page = get_response_page(i)
+        page_data = get_house(response_page['response'])
+        data.extend(page_data)
+        print(f"\nПолучено данные страницы = {i}")
+    return data
 
-        print(f"current_page = {current_page} | page = {i}")
-        data.extend(get_house(req))
 
-        if current_page != i:
-            print("Страница было перенаправлено")
+def main():
+    while True:
+        print("\nВыберите куда вам надо сохранить результаты парсера\n1) На базу данных\n2) На Google Sheet")
+        answer_user = input("напишите цифру - ")
+        if answer_user.isdigit() and int(answer_user) in [1,2]:
+            while True:
+                print("\nУкажите диапазон страницы")
+                start_page, end_page = input("начало страницы - "), input("конец страницы - ")
+                if start_page.isdigit() and end_page.isdigit():
+                    data_houses = get_page_houses(int(start_page), int(end_page))
+                    match int(answer_user):
+                        case 1:
+                            save_house_db.save(data_houses)
+                        case 2:
+                            save_house_google_sheets.save(data_houses)
+                    break
+                print("\nУкажите корректные данные")
             break
-    save_google_sheets.save(data)
-
-
-def main(): 
-    get_page_houses(10)
+            
+                    
+                
