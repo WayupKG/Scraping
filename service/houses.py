@@ -1,5 +1,4 @@
-import requests
-import re
+import time
 import asyncio
 import aiohttp
 
@@ -12,6 +11,7 @@ from service import save_house_google_sheets
 
 
 house_data = []
+start_time = time.time()
 
 async def get_page_data(session, page):
     full_url = f"{url}page-{page}/{url_end}"
@@ -28,6 +28,7 @@ async def get_page_data(session, page):
                 
         soup = BeautifulSoup(response_text, 'lxml')
         houses = soup.find("main").find_all("div", class_="search-item")
+        
         for item in houses:
             title = item.find("a", class_="title").text.strip(),
             price = item.find("div", class_="price").text.strip(),
@@ -66,6 +67,7 @@ def main():
                     break
                 print("\nУкажите корректные данные")
             break
-            
+    finish_time = time.time() - start_time
+    print(f"\n--- Затраченное на работу скрипта время: {finish_time} ---\n")
                     
                 
