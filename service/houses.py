@@ -9,25 +9,17 @@ from data.config import url, url_end, not_image, headers
 from service import save_house_db
 from service import save_house_google_sheets
 
-
 house_data = []
 start_time = time.time()
 
-async def get_page_data(session, page):
+
+# получает данные от определенной страницы
+async def get_page_data(session, page: int) -> None:
     full_url = f"{url}page-{page}/{url_end}"
     async with session.get(url=full_url, headers=headers) as response:
-        response_text = await response.text()
-
-        # response_page = re.findall(r'\d{1}/|\d{2}/', response.url)
-        # current_page = int(response_page[0].replace('/', '')) if response_page else 1
-        # context = {'response': response.text, 'page': current_page}
-        # response_page = get_response_page(i)
-        # page_data = get_house(response_page['response'])
-        # data.extend(page_data)
-        # print(f"\nПолучено данные страницы = {i}")
-                
+        response_text = await response.text()                
         soup = BeautifulSoup(response_text, 'lxml')
-        houses = soup.find("main").find_all("div", class_="search-item")
+        houses = soup.find_all("div", class_="search-item")
         
         for item in houses:
             title = item.find("a", class_="title").text.strip(),
@@ -39,17 +31,19 @@ async def get_page_data(session, page):
         print(f"[INFO] Обработано страницы {page}")
 
 
-
-async def get_page_houses(start_page: int, end_page: int):
+# отрывает асинхронное соединение с сайтом
+async def get_page_houses(start_page: int, end_page: int) -> None:
     async with aiohttp.ClientSession() as session:
         tasks = []
+        # в каждую страницу создает асинхронное задание
         for page in range(start_page, end_page + 1):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
         await asyncio.gather(*tasks)            
 
 
-def main():
+# спрашивает пользователя куда хочеть сохранить результаты парсера и диапазон страницы
+def main() -> None:
     while True:
         print("\nВыберите куда вам надо сохранить результаты парсера\n1) На базу данных\n2) На Google Sheet")
         answer_user = input("напишите цифру - ")

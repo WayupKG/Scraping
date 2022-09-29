@@ -2,8 +2,8 @@
 from models.base import Base, Session, engine
 from models.house import House
 
-
-def save(data):
+# сохраняет все данные в базу данных
+def save(data) -> None:
     Base.metadata.create_all(engine)
     session = Session()
     for item in data:

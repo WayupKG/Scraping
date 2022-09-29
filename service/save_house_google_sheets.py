@@ -1,7 +1,7 @@
 from data.spreadsheets import spreadsheet_id, service
 
-
-def save(data: list):
+# сохраняет все данные в Google Sheets
+def save(data: list) -> None:
     service.spreadsheets().values().batchUpdate(
         spreadsheetId=spreadsheet_id,
         body={
